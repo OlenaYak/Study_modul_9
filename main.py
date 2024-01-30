@@ -1,3 +1,4 @@
+
 phone_number_dict = {}
 
 def input_error(func):
@@ -17,7 +18,6 @@ def notation(name, phone):   # запис телефону в словник
     if name in phone_number_dict:
         raise ValueError('The contact is already in the notebook')
     phone_number_dict[name] = phone
-    #print(f'You have added a contact {name}')
     return f'You have added a contact {name}'
 
 @input_error
@@ -25,7 +25,6 @@ def changes(name, phone):  # зміна номеру мобільного для
     if name not in phone_number_dict:
         raise KeyError(f'No contact {name} in the notebook')
     phone_number_dict[name] = phone
-    #print(f'You have changed the {name} contact phone number')
     return f'You have changed the {name} contact phone number'
 
 @input_error
@@ -33,15 +32,13 @@ def show_phone(name): # вивід номеру телефону по запит
     if name not in phone_number_dict:
         raise KeyError(f'No contact {name} in the notebook')
     result = f"Phone number is {phone_number_dict[name]} for {name}" 
-    #print(result)
     return result
 
 @input_error
 def show_all():  # вивід всього змісту записника
     if not phone_number_dict:
-        #print('The notebook is empty')
+        print('The notebook is empty')
         return 'The notebook is empty'
-    #print(phone_number_dict)
     return phone_number_dict
 
 # Вся логіка взаємодії з користувачем реалізована у функції main, всі print та input відбуваються тільки там
@@ -49,32 +46,36 @@ def main():
     bot_helper = True
     while bot_helper:
         command = input("Enter a command and info for the notebook: ").lower()
-        if command == 'hello':
+        block = command.split()
+        if block[0] == 'hello':
             print('How can I help you?')
-        elif command.startswith('add'):
-            try:
-                name, phone = command.split()[1:]
+        elif block[0] == 'add':
+            if len(block) < 3:
+                print('Name and phone number are missing') 
+            else:
+                name = block[1]
+                phone = block[2]
                 result = notation(name, phone)
-            except ValueError as e:
-                result = str(e)
-            print(result)
-        elif command.startswith('change'):
-            try:
-                name, phone = command.split()[1:]
+                print(result)
+        elif block[0] =='change':
+            if len(block) < 3:
+                print('Name and phone number are missing')
+            else:
+                name = block[1]
+                phone = block[2]
                 result = changes(name, phone)
-            except ValueError as e:
-                result = str(e)
-            print(result)
-        elif command.startswith('phone'):
-            try:
-                name = command.split()[1]
+                print(result)
+        elif block[0] == 'phone':
+            if len(block) < 2:
+                print('Name is missing')
+            else:
+                name = block[1]
                 result = show_phone(name)
-            except ValueError as e:
-                result = str(e)
+                print(result)
+        elif block[0] == 'show' and block[1] == 'all':
+            result = show_all()
             print(result)
-        elif command == 'show all':
-            print(show_all())
-        elif command in ['good bye', 'close', 'exit']:
+        elif block[0] in ['good', 'bye', 'close', 'exit']:
             print('Good bye!')
             bot_helper = False
         else:
